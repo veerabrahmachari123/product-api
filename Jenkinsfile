@@ -4,7 +4,7 @@ pipeline {
     environment {
         IMAGE_NAME     = 'product-api'
         CONTAINER_NAME = 'product-api'
-        HOST_PORT      = '8080'
+        HOST_PORT      = '8090'
     }
 
     stages {
