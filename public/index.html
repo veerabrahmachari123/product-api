@@ -1,67 +1,181 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>Product Manager</title>
-  <style>
-    body { font-family: Arial, sans-serif; max-width: 800px; margin: 30px auto; padding: 0 15px; }
-    input { padding: 8px; margin: 4px; }
-    button { padding: 8px 14px; cursor: pointer; }
-    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-    th { background: #f0f0f0; }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MobileMart - Buy Mobiles Online</title>
+<style>
+:root{--pri:#1e3a8a;--acc:#f59e0b;--bg:#f4f6fa;--txt:#1c2333;--mut:#64748b;--ok:#16a34a;--bad:#dc2626}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,Arial,sans-serif;background:var(--bg);color:var(--txt)}
+a{color:inherit;text-decoration:none}
+header{background:var(--pri);color:#fff;position:sticky;top:0;z-index:5}
+.nav{max-width:1150px;margin:auto;padding:12px 20px;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.logo{font-size:22px;font-weight:700}
+.nav a.l{opacity:.9;font-size:15px}.nav a.l:hover{opacity:1;text-decoration:underline}
+.nav .sp{flex:1}
+.cartlink{background:var(--acc);color:var(--txt);padding:8px 14px;border-radius:6px;font-weight:600}
+main{max-width:1150px;margin:auto;padding:20px}
+.hero{background:linear-gradient(120deg,#1e3a8a,#6d28d9);color:#fff;border-radius:14px;padding:50px 34px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.hero h1{font-size:36px;margin:0 0 10px}.hero p{margin:0 0 20px;opacity:.9;font-size:17px}
+.hero .big{font-size:110px}
+.btn{display:inline-block;background:var(--acc);color:var(--txt);border:0;padding:11px 22px;border-radius:7px;font-weight:600;cursor:pointer;font-size:15px}
+.btn.pri{background:var(--pri);color:#fff}.btn.ok{background:var(--ok);color:#fff}.btn.line{background:#fff;border:1px solid #cbd5e1}.btn.sm{padding:6px 12px;font-size:13px}.btn:disabled{background:#cbd5e1;cursor:not-allowed}
+h2.sec{margin:34px 0 14px;font-size:22px}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px}
+.tile{background:#fff;border-radius:10px;padding:22px;text-align:center;box-shadow:0 1px 4px #0002;cursor:pointer}
+.tile span{font-size:40px;display:block}
+.perks{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-top:34px}
+.perk{background:#fff;border-radius:10px;padding:16px;text-align:center;font-size:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:18px}
+.card{background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 1px 4px #0002;display:flex;flex-direction:column}
+.pic{height:140px;display:flex;align-items:center;justify-content:center;font-size:60px;background:linear-gradient(135deg,#dbeafe,#e0e7ff);cursor:pointer}
+.info{padding:14px;display:flex;flex-direction:column;gap:6px;flex:1}
+.brand{font-size:12px;color:var(--mut);text-transform:uppercase}.name{font-weight:600;cursor:pointer}
+.price{font-size:19px;font-weight:700}.stock{font-size:12px;color:var(--ok)}.stock.low{color:var(--bad)}
+.filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px;background:#fff;padding:12px;border-radius:10px}
+input,select,textarea{padding:9px 10px;border:1px solid #cbd5e1;border-radius:6px;font-size:14px;font-family:inherit}
+.box{background:#fff;border-radius:12px;padding:22px;box-shadow:0 1px 4px #0002}
+.detail{display:grid;grid-template-columns:1fr 1fr;gap:26px}
+.detail .pic{height:320px;font-size:130px;border-radius:12px;cursor:default}
+@media(max-width:720px){.detail,.two{grid-template-columns:1fr!important}.hero h1{font-size:26px}}
+table{width:100%;border-collapse:collapse}th,td{padding:10px 8px;text-align:left;border-bottom:1px solid #e2e8f0;font-size:14px}
+.two{display:grid;grid-template-columns:2fr 1fr;gap:20px;align-items:start}
+.form{display:grid;gap:10px}.form input,.form select,.form textarea{width:100%}
+.row{display:flex;justify-content:space-between;padding:6px 0}
+.qty button{width:26px;height:26px;border:1px solid #cbd5e1;background:#fff;border-radius:4px;cursor:pointer}
+#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--txt);color:#fff;padding:10px 18px;border-radius:6px;display:none;z-index:20}
+footer{background:#0f172a;color:#cbd5e1;text-align:center;padding:26px 16px;margin-top:40px;font-size:14px}
+footer a{color:#93c5fd}
+.ok-t{color:var(--ok)}
+</style>
 </head>
 <body>
-  <h1>Product Manager</h1>
-  <p>Health: <b id="health">checking...</b></p>
-
-  <input id="name" placeholder="Name">
-  <input id="price" type="number" placeholder="Price">
-  <input id="quantity" type="number" placeholder="Quantity">
-  <button onclick="addProduct()">Add Product</button>
-
-  <table>
-    <thead><tr><th>ID</th><th>Name</th><th>Price</th><th>Qty</th><th>Actions</th></tr></thead>
-    <tbody id="rows"></tbody>
-  </table>
+<header><div class="nav">
+  <a class="logo" href="#/">&#128241; MobileMart</a>
+  <a class="l" href="#/">Home</a><a class="l" href="#/shop">Shop</a><a class="l" href="#/admin">Admin</a>
+  <span class="sp"></span>
+  <a class="cartlink" href="#/cart">&#128722; Cart (<span id="count">0</span>)</a>
+</div></header>
+<main id="app">Loading...</main>
+<footer>&copy; 2026 MobileMart &middot; Genuine products &middot; Free delivery over &#8377;10,000<br>
+<a href="/health">API health</a> &middot; <a href="/products">Products JSON</a></footer>
+<div id="toast"></div>
 
 <script>
-async function load() {
-  const h = await fetch('/health').then(r => r.json());
-  document.getElementById('health').textContent = h.status;
-  const list = await fetch('/products').then(r => r.json());
-  document.getElementById('rows').innerHTML = list.map(p => `
-    <tr>
-      <td>${p.id}</td><td>${p.name}</td><td>${p.price}</td><td>${p.quantity}</td>
-      <td>
-        <button onclick="editProduct(${p.id}, '${p.name}', ${p.price})">Edit</button>
-        <button onclick="removeProduct(${p.id})">Delete</button>
-      </td>
-    </tr>`).join('');
-}
-async function addProduct() {
-  const body = {
-    name: document.getElementById('name').value,
-    price: Number(document.getElementById('price').value),
-    quantity: Number(document.getElementById('quantity').value || 0)
-  };
-  const r = await fetch('/products', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body) });
-  if (!r.ok) alert(JSON.stringify(await r.json()));
-  ['name','price','quantity'].forEach(id => document.getElementById(id).value = '');
-  load();
-}
-async function editProduct(id, name, price) {
-  const newName = prompt('New name:', name);
-  const newPrice = prompt('New price:', price);
-  if (newName === null || newPrice === null) return;
-  await fetch('/products/' + id, { method: 'PATCH', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ name: newName, price: Number(newPrice) }) });
-  load();
-}
-async function removeProduct(id) {
-  await fetch('/products/' + id, { method: 'DELETE' });
-  load();
-}
+const ICON={Mobiles:'\u{1F4F1}',Accessories:'\u{1F3A7}',Wearables:'\u231A',General:'\u{1F4E6}'};
+const inr=n=>'\u20B9'+Number(n).toLocaleString('en-IN');
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const $=id=>document.getElementById(id);
+let products=[],cart={},f={q:'',cat:'All',brand:'All',sort:'',max:''};
+try{cart=JSON.parse(localStorage.getItem('cart')||'{}')}catch(e){}
+const save=()=>{try{localStorage.setItem('cart',JSON.stringify(cart))}catch(e){}};
+const P=id=>products.find(p=>p.id==id);
+const icon=p=>ICON[p.category]||ICON.General;
+function toast(m){const t=$('toast');t.textContent=m;t.style.display='block';setTimeout(()=>t.style.display='none',1800)}
+
+async function load(){products=await fetch('/products').then(r=>r.json());route()}
+function cartInfo(){let sub=0,n=0;const lines=[];
+  for(const id in cart){const p=P(id);if(!p)continue;lines.push({p,n:cart[id]});sub+=p.price*cart[id];n+=cart[id]}
+  const ship=sub===0||sub>=10000?0:99;return{lines,sub,ship,total:sub+ship,n}}
+
+function card(p){return `<div class="card"><div class="pic" onclick="location.hash='#/product/${p.id}'">${icon(p)}</div>
+ <div class="info"><span class="brand">${esc(p.brand)}</span><span class="name" onclick="location.hash='#/product/${p.id}'">${esc(p.name)}</span>
+ <span class="price">${inr(p.price)}</span><span class="stock ${p.quantity<6?'low':''}">${p.quantity>0?p.quantity+' in stock':'Out of stock'}</span>
+ <button class="btn pri sm" ${p.quantity<1?'disabled':''} onclick="add(${p.id})">Add to Cart</button></div></div>`}
+
+function home(){
+  const cats=[...new Set(products.map(p=>p.category))];
+  const feat=products.filter(p=>p.category==='Mobiles').slice(0,4);
+  return `<div class="hero"><div><h1>Latest smartphones,<br>best prices.</h1><p>Top brands, genuine warranty, fast delivery.</p>
+   <a class="btn" href="#/shop">Shop Now</a></div><div class="big">&#128241;</div></div>
+   <h2 class="sec">Shop by category</h2><div class="tiles">${cats.map(c=>`<div class="tile" onclick="f.cat='${esc(c)}';location.hash='#/shop'"><span>${ICON[c]||ICON.General}</span>${esc(c)}</div>`).join('')}</div>
+   <h2 class="sec">Featured phones</h2><div class="grid">${feat.map(card).join('')}</div>
+   <div class="perks"><div class="perk">&#128666;<br><b>Free delivery</b><br>on orders over &#8377;10,000</div><div class="perk">&#128737;<br><b>1-year warranty</b><br>on all phones</div><div class="perk">&#8617;<br><b>7-day returns</b><br>no questions asked</div><div class="perk">&#128176;<br><b>Cash on delivery</b><br>or pay by UPI</div></div>`}
+
+function shop(){
+  const cats=['All',...new Set(products.map(p=>p.category))],brands=['All',...new Set(products.map(p=>p.brand).filter(Boolean))];
+  const opt=(a,v)=>a.map(x=>`<option ${x==v?'selected':''}>${esc(x)}</option>`).join('');
+  return `<h2 class="sec" style="margin-top:0">Shop</h2><div class="filters">
+   <input id="fq" placeholder="Search..." value="${esc(f.q)}" oninput="f.q=this.value;list()">
+   <select onchange="f.cat=this.value;list()">${opt(cats,f.cat)}</select>
+   <select onchange="f.brand=this.value;list()">${opt(brands,f.brand)}</select>
+   <input type="number" placeholder="Max price" value="${esc(f.max)}" style="width:120px" oninput="f.max=this.value;list()">
+   <select onchange="f.sort=this.value;list()"><option value="">Sort: Featured</option><option value="lo" ${f.sort=='lo'?'selected':''}>Price: Low to High</option><option value="hi" ${f.sort=='hi'?'selected':''}>Price: High to Low</option></select>
+  </div><div class="grid" id="plist"></div>`}
+function list(){
+  let l=products.filter(p=>(f.cat=='All'||p.category==f.cat)&&(f.brand=='All'||p.brand==f.brand)&&(!f.max||p.price<=+f.max)&&
+    (p.name+' '+p.brand+' '+p.description).toLowerCase().includes(f.q.toLowerCase()));
+  if(f.sort=='lo')l.sort((a,b)=>a.price-b.price);if(f.sort=='hi')l.sort((a,b)=>b.price-a.price);
+  $('plist').innerHTML=l.map(card).join('')||'<p>No products match your filters.</p>'}
+
+function product(id){const p=P(id);if(!p)return '<div class="box">Product not found. <a href="#/shop">Back to shop</a></div>';
+  const rel=products.filter(x=>x.category==p.category&&x.id!=p.id).slice(0,4);
+  return `<p><a href="#/shop">&larr; Back to shop</a></p><div class="box detail"><div class="pic">${icon(p)}</div><div>
+   <span class="brand">${esc(p.brand)}</span><h1 style="margin:6px 0">${esc(p.name)}</h1><div class="price" style="font-size:28px">${inr(p.price)}</div>
+   <p>${esc(p.description)}</p><p class="stock ${p.quantity<6?'low':''}">${p.quantity>0?'In stock ('+p.quantity+' left)':'Out of stock'}</p>
+   <p>&#128666; ${p.price>=10000?'Free delivery':'Delivery &#8377;99'} &middot; &#128737; 1-year warranty &middot; &#8617; 7-day returns</p>
+   <button class="btn pri" ${p.quantity<1?'disabled':''} onclick="add(${p.id})">Add to Cart</button>
+   <button class="btn" ${p.quantity<1?'disabled':''} onclick="add(${p.id});location.hash='#/cart'">Buy Now</button></div></div>
+   ${rel.length?`<h2 class="sec">You may also like</h2><div class="grid">${rel.map(card).join('')}</div>`:''}`}
+
+function cartView(){const c=cartInfo();
+  if(!c.n)return `<div class="box"><h2>Your cart is empty</h2><a class="btn" href="#/shop">Continue shopping</a></div>`;
+  return `<h2 class="sec" style="margin-top:0">Shopping Cart</h2><div class="two"><div class="box"><table>
+   ${c.lines.map(({p,n})=>`<tr><td>${icon(p)} <a href="#/product/${p.id}"><b>${esc(p.name)}</b></a><br><small>${inr(p.price)}</small></td>
+   <td class="qty"><button onclick="change(${p.id},-1)">-</button> ${n} <button onclick="change(${p.id},1)">+</button></td>
+   <td>${inr(p.price*n)}</td><td><button class="btn line sm" onclick="change(${p.id},-99)">Remove</button></td></tr>`).join('')}</table></div>
+   <div class="box"><h3 style="margin-top:0">Order Summary</h3><div class="row"><span>Subtotal</span><span>${inr(c.sub)}</span></div>
+   <div class="row"><span>Delivery</span><span>${c.ship?inr(c.ship):'FREE'}</span></div><hr>
+   <div class="row"><b>Total</b><b>${inr(c.total)}</b></div><a class="btn ok" style="width:100%;text-align:center;margin-top:10px" href="#/checkout">Proceed to Checkout</a></div></div>`}
+
+function checkout(){const c=cartInfo();if(!c.n){location.hash='#/cart';return ''}
+  return `<h2 class="sec" style="margin-top:0">Checkout</h2><div class="two"><form class="box form" onsubmit="placeOrder(event)">
+   <h3 style="margin:0">Delivery details</h3>
+   <input id="cn" placeholder="Full name" required><input id="cp" placeholder="Phone (10 digits)" pattern="[0-9]{10}" required>
+   <textarea id="ca" rows="3" placeholder="Address" required></textarea>
+   <div style="display:flex;gap:10px"><input id="cc" placeholder="City" required><input id="cz" placeholder="Pincode" pattern="[0-9]{6}" required></div>
+   <h3 style="margin:8px 0 0">Payment</h3>
+   <select id="cm"><option>Cash on Delivery</option><option>UPI (pay on delivery)</option><option>Card (demo)</option></select>
+   <button class="btn ok" type="submit">Place Order &middot; ${inr(c.total)}</button></form>
+   <div class="box"><h3 style="margin-top:0">Your items</h3>${c.lines.map(({p,n})=>`<div class="row"><span>${esc(p.name)} &times; ${n}</span><span>${inr(p.price*n)}</span></div>`).join('')}
+   <hr><div class="row"><b>Total</b><b>${inr(c.total)}</b></div></div></div>`}
+async function placeOrder(e){e.preventDefault();const c=cartInfo();
+  for(const{p,n}of c.lines){const r=await fetch('/products/'+p.id,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({quantity:Math.max(0,p.quantity-n)})});if(!r.ok){toast('Could not place order');return}}
+  const o={id:'MM'+Date.now().toString().slice(-8),name:$('cn').value,city:$('cc').value,pay:$('cm').value,total:c.total,items:c.n};
+  try{localStorage.setItem('lastOrder',JSON.stringify(o))}catch(e){}
+  cart={};save();await load();location.hash='#/order'}
+function order(){let o={};try{o=JSON.parse(localStorage.getItem('lastOrder')||'{}')}catch(e){}
+  if(!o.id)return '<div class="box">No recent order. <a href="#/shop">Shop now</a></div>';
+  return `<div class="box" style="text-align:center;max-width:560px;margin:30px auto"><div style="font-size:60px">&#9989;</div>
+   <h2 class="ok-t">Order placed successfully!</h2><p>Thank you, <b>${esc(o.name)}</b>.</p>
+   <p>Order ID: <b>${esc(o.id)}</b><br>${o.items} item(s) &middot; ${inr(o.total)} &middot; ${esc(o.pay)}<br>Delivering to ${esc(o.city)} in 3-5 days.</p><a class="btn" href="#/shop">Continue shopping</a></div>`}
+
+function admin(){return `<h2 class="sec" style="margin-top:0">Admin - Manage Products</h2><div class="two">
+  <div class="box"><table><tr><th>ID</th><th>Name</th><th>Price</th><th>Stock</th><th></th></tr>
+  ${products.map(p=>`<tr><td>${p.id}</td><td>${esc(p.name)}<br><small>${esc(p.category)}</small></td><td>${inr(p.price)}</td><td>${p.quantity}</td>
+  <td><button class="btn line sm" onclick="restock(${p.id})">+10</button> <button class="btn line sm" onclick="del(${p.id})">Delete</button></td></tr>`).join('')}</table></div>
+  <form class="box form" onsubmit="addProduct(event)"><h3 style="margin:0">Add product</h3>
+   <input id="an" placeholder="Name" required><input id="ab" placeholder="Brand">
+   <select id="ac"><option>Mobiles</option><option>Accessories</option><option>Wearables</option><option>General</option></select>
+   <input id="ap" type="number" min="0" placeholder="Price" required><input id="aq" type="number" min="0" placeholder="Quantity" required>
+   <textarea id="ad" rows="2" placeholder="Description"></textarea><button class="btn pri" type="submit">Add Product</button>
+   <small>No login yet - protect this page before going public.</small></form></div>`}
+async function addProduct(e){e.preventDefault();
+  const r=await fetch('/products',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:$('an').value,brand:$('ab').value,category:$('ac').value,price:+$('ap').value,quantity:+$('aq').value,description:$('ad').value})});
+  if(r.ok){toast('Product added');await load()}else toast('Invalid product data')}
+async function restock(id){await fetch('/products/'+id,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({quantity:P(id).quantity+10})});await load()}
+async function del(id){if(!confirm('Delete this product?'))return;await fetch('/products/'+id,{method:'DELETE'});delete cart[id];save();await load()}
+
+function add(id){const p=P(id);if((cart[id]||0)>=p.quantity)return toast('No more stock available');cart[id]=(cart[id]||0)+1;save();count();toast(p.name+' added to cart')}
+function change(id,d){const n=(cart[id]||0)+d;if(n<=0)delete cart[id];else if(n<=P(id).quantity)cart[id]=n;else toast('Not enough stock');save();route()}
+function count(){$('count').textContent=cartInfo().n}
+
+function route(){const[,page,arg]=(location.hash||'#/').split('/');let h;
+  if(page==='shop')h=shop();else if(page==='product')h=product(arg);else if(page==='cart')h=cartView();
+  else if(page==='checkout')h=checkout();else if(page==='order')h=order();else if(page==='admin')h=admin();else h=home();
+  $('app').innerHTML=h;if(page==='shop')list();count();window.scrollTo(0,0)}
+window.addEventListener('hashchange',route);
 load();
 </script>
 </body>
