@@ -7,6 +7,7 @@ COPY package*.json ./
 RUN npm ci --omit=dev
 
 COPY src ./src
+COPY public ./public
 
 # Defaults (override at runtime with -e or --env-file)
 ENV NODE_ENV=production \

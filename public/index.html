@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Product Manager</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 800px; margin: 30px auto; padding: 0 15px; }
+    input { padding: 8px; margin: 4px; }
+    button { padding: 8px 14px; cursor: pointer; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    th { background: #f0f0f0; }
+  </style>
+</head>
+<body>
+  <h1>Product Manager</h1>
+  <p>Health: <b id="health">checking...</b></p>
+
+  <input id="name" placeholder="Name">
+  <input id="price" type="number" placeholder="Price">
+  <input id="quantity" type="number" placeholder="Quantity">
+  <button onclick="addProduct()">Add Product</button>
+
+  <table>
+    <thead><tr><th>ID</th><th>Name</th><th>Price</th><th>Qty</th><th>Actions</th></tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+
+<script>
+async function load() {
+  const h = await fetch('/health').then(r => r.json());
+  document.getElementById('health').textContent = h.status;
+  const list = await fetch('/products').then(r => r.json());
+  document.getElementById('rows').innerHTML = list.map(p => `
+    <tr>
+      <td>${p.id}</td><td>${p.name}</td><td>${p.price}</td><td>${p.quantity}</td>
+      <td>
+        <button onclick="editProduct(${p.id}, '${p.name}', ${p.price})">Edit</button>
+        <button onclick="removeProduct(${p.id})">Delete</button>
+      </td>
+    </tr>`).join('');
+}
+async function addProduct() {
+  const body = {
+    name: document.getElementById('name').value,
+    price: Number(document.getElementById('price').value),
+    quantity: Number(document.getElementById('quantity').value || 0)
+  };
+  const r = await fetch('/products', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body) });
+  if (!r.ok) alert(JSON.stringify(await r.json()));
+  ['name','price','quantity'].forEach(id => document.getElementById(id).value = '');
+  load();
+}
+async function editProduct(id, name, price) {
+  const newName = prompt('New name:', name);
+  const newPrice = prompt('New price:', price);
+  if (newName === null || newPrice === null) return;
+  await fetch('/products/' + id, { method: 'PATCH', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ name: newName, price: Number(newPrice) }) });
+  load();
+}
+async function removeProduct(id) {
+  await fetch('/products/' + id, { method: 'DELETE' });
+  load();
+}
+load();
+</script>
+</body>
+</html>

@@ -3,6 +3,7 @@ const config = require('./config');
 
 const app = express();
 app.use(express.json());
+app.use(express.static(require('path').join(__dirname, '..', 'public')));
 
 // In-memory store
 const products = new Map();
